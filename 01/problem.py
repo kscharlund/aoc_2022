@@ -18,7 +18,7 @@ def memoize(func):
     return Memodict().__getitem__
 
 
-def read_inventories() -> list[int]:
+def read_sorted_inventory_sums() -> list[int]:
     inventories = []
     current_inventory = []
     for line in open(sys.argv[1]):
@@ -28,16 +28,19 @@ def read_inventories() -> list[int]:
         else:
             current_inventory.append(int(line))
     inventories.append(current_inventory)
-    return inventories
+    return sorted(sum(inv) for inv in inventories)
+
+
+def sum_of_n_largest(elems: list[int], n: int) -> int:
+    return sum(elems[-n:])
 
 
 def a():
-    print(max(sum(inv) for inv in read_inventories()))
+    print(sum_of_n_largest(read_sorted_inventory_sums(), 1))
 
 
 def b():
-    sums = sorted(sum(inv) for inv in read_inventories())
-    print(sum(sums[-3:]))
+    print(sum_of_n_largest(read_sorted_inventory_sums(), 3))
 
 
 def main():
