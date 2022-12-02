@@ -25,7 +25,10 @@ def main():
     user_star_timestamps = get_user_star_timestamps(leaderboard_data)
     fastest_first_star = None
     fastest_second_star = None
-    for uid, problems in user_star_timestamps.items():
+    for uid, problems in sorted(
+        user_star_timestamps.items(),
+        key=lambda x: (leaderboard_data["members"][x[0]]["local_score"], x[0]),
+    ):
         user_name = leaderboard_data["members"][uid]["name"]
         num_stars = leaderboard_data["members"][uid]["stars"]
         local_score = leaderboard_data["members"][uid]["local_score"]
