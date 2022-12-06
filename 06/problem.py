@@ -22,24 +22,22 @@ def get_data():
     return [line.strip() for line in open(sys.argv[1])]
 
 
+def find_marker(line, window_size):
+    for start in range(len(line)):
+        end = start + window_size
+        if len(set(line[start:end])) == window_size:
+            return end
+    return None
+
+
 def a(data):
     for line in data:
-        for start in range(len(line)):
-            if len(set(line[start : start + 4])) == 4:
-                print(start + 4)
-                break
-        else:
-            print("Huh?")
+        print(find_marker(line, 4))
 
 
 def b(data):
     for line in data:
-        for start in range(len(line)):
-            if len(set(line[start : start + 14])) == 14:
-                print(start + 14)
-                break
-        else:
-            print("Huh?")
+        print(find_marker(line, 14))
 
 
 def main():
