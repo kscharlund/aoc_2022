@@ -1,21 +1,7 @@
+from collections import deque
 import sys
 from pprint import pprint
 import math
-
-
-def memoize(func):
-    """
-    Memoization decorator for a function taking a single argument.
-    """
-
-    class Memodict(dict):
-        """Memoization dictionary."""
-
-        def __missing__(self, key):
-            ret = self[key] = func(key)
-            return ret
-
-    return Memodict().__getitem__
 
 
 def height(cc):
@@ -44,82 +30,43 @@ def get_data():
                 cc = "z"
             if cc == "a":
                 srcs.append(idx)
-            hh = ord(cc)
-            for dy, dx in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                ny, nx = row + dy, col + dx
-                if 0 <= ny < rows and 0 <= nx < cols:
-                    if hh + 1 >= height(grid[ny][nx]):
-                        adj[idx].append((ny * cols + nx, 1))
+            hh = ord(cc) + 1
+            if row > 0 and hh >= height(grid[row - 1][col]):
+                adj[idx].append((row - 1) * cols + col)
+            if row + 1 < rows and hh >= height(grid[row + 1][col]):
+                adj[idx].append((row + 1) * cols + col)
+            if col > 0 and hh >= height(grid[row][col - 1]):
+                adj[idx].append(row * cols + col - 1)
+            if col + 1 < cols and hh >= height(grid[row][col + 1]):
+                adj[idx].append(row * cols + col + 1)
     return adj, src, dst, srcs
 
 
-class BucketQueue:
-    def __init__(self, max_dist: int):
-        self._buckets = [set() for _ in range(max_dist + 1)]
-        self._count = 0
-        self._min_p = 0
-
-    def extract_min(self) -> int:
-        assert self._count
-        self._count -= 1
-        for p in range(self._min_p, len(self._buckets)):
-            if self._buckets[p]:
-                self._min_p = p
-                return self._buckets[p].pop()
-
-    def add_at(self, u: int, p: int) -> None:
-        self._count += 1
-        self._buckets[p].add(u)
-        if p < self._min_p:
-            self._min_p = p
-
-    def move(self, u: int, p_old: int, p_new: int) -> None:
-        self._buckets[p_old].remove(u)
-        self._buckets[p_new].add(u)
-        if p_new < self._min_p:
-            self._min_p = p_new
-
-    def empty(self) -> bool:
-        return self._count == 0
-
-
-def dijkstra_with_bucket_queue(edges, size, src):
-    # Dijkstra with bucket queue
-    max_dist = size
-    bq = BucketQueue(max_dist)
-    dist = [max_dist for _ in range(size)]
-    prev = [-1 for _ in range(size)]
-    bq.add_at(src, 0)
+def bfs_distance(adj, src):
+    dist = [-1 for _ in range(len(adj))]
     dist[src] = 0
-    for n in range(size):
-        if n != src:
-            bq.add_at(n, max_dist)
-
-    while not bq.empty():
-        u = bq.extract_min()
-        for v, w in edges[u]:
-            d = dist[u] + w
-            if d < dist[v]:
-                bq.move(v, dist[v], d)
-                dist[v] = d
-                prev[v] = u
-
-    return dist, prev
+    queue = deque([src])
+    while queue:
+        u = queue.popleft()
+        for v in adj[u]:
+            if dist[v] < 0:
+                dist[v] = dist[u] + 1
+                queue.append(v)
+    return dist
 
 
 def a(data):
     adj, src, dst, _ = data
-    dist, _ = dijkstra_with_bucket_queue(adj, len(adj), src)
-    print(dist[dst])
+    b((adj, src, dst, [src]))
 
 
 def b(data):
     adj, _, dst, srcs = data
     dists = []
     for src in srcs:
-        dist, _ = dijkstra_with_bucket_queue(adj, len(adj), src)
+        dist = bfs_distance(adj, src)
         dists.append(dist[dst])
-    print(min(dists))
+    print(min(dist for dist in dists if dist >= 0))
 
 
 def main():

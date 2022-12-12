@@ -11,3 +11,6 @@ Could use my code Dijkstra + bucket queue code from 2021-12-15 pretty much
 straight up. Had to adjust graph representation slightly and handle non-zero
 source position, but otherwise no problems. Thought about Floyd-Warshall,
 but O(N^3) time is too much. :(
+
+Then, later in the evening, I realized that the shortest path in an unweighted
+graph is just a BFS. Doh.
