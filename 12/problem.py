@@ -30,14 +30,14 @@ def get_data():
                 cc = "z"
             if cc == "a":
                 srcs.append(idx)
-            hh = ord(cc) + 1
-            if row > 0 and hh >= height(grid[row - 1][col]):
+            hh = ord(cc) - 1
+            if row > 0 and hh <= height(grid[row - 1][col]):
                 adj[idx].append((row - 1) * cols + col)
-            if row + 1 < rows and hh >= height(grid[row + 1][col]):
+            if row + 1 < rows and hh <= height(grid[row + 1][col]):
                 adj[idx].append((row + 1) * cols + col)
-            if col > 0 and hh >= height(grid[row][col - 1]):
+            if col > 0 and hh <= height(grid[row][col - 1]):
                 adj[idx].append(row * cols + col - 1)
-            if col + 1 < cols and hh >= height(grid[row][col + 1]):
+            if col + 1 < cols and hh <= height(grid[row][col + 1]):
                 adj[idx].append(row * cols + col + 1)
     return adj, src, dst, srcs
 
@@ -63,9 +63,9 @@ def a(data):
 def b(data):
     adj, _, dst, srcs = data
     dists = []
+    dist = bfs_distance(adj, dst)
     for src in srcs:
-        dist = bfs_distance(adj, src)
-        dists.append(dist[dst])
+        dists.append(dist[src])
     print(min(dist for dist in dists if dist >= 0))
 
 
