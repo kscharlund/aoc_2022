@@ -34,12 +34,6 @@ def cmp_packets(lp, rp):
         return cmp_packets([lp], rp)
     if isinstance(rp, int):
         return cmp_packets(lp, [rp])
-    if not lp and not rp:
-        return 0
-    if not lp:
-        return -1
-    if not rp:
-        return 1
     for i in range(min(len(lp), len(rp))):
         c = cmp_packets(lp[i], rp[i])
         if c:
